@@ -6,9 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { ICreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
@@ -16,8 +18,31 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: ICreateUserDto) {
+    try {
+      const user = await this.usersService.create(createUserDto);
+
+      return user;
+    } catch (err) {
+      if (err.code === 'P2002') {
+        throw new HttpException(
+          {
+            status: 'error',
+            message: 'Email already exists.',
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
+
+      throw new HttpException(
+        {
+          status: 'error',
+          message: 'Failed to create user.',
+          error: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get()
