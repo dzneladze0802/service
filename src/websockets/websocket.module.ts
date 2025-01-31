@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppGateway } from './chat.gateway';
+import { AppGateway } from './app.gateway';
+import { BoardService } from './board.service';
 
 @Module({
-  providers: [AppGateway],
+  providers: [AppGateway, BoardService],
 })
 export class WebsocketModule {}

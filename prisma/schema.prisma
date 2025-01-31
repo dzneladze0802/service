@@ -23,3 +23,22 @@ enum Gender {
   MALE
   FEMALE
 }
+
+
+model BoardTile {
+  id        String   @id @default(uuid())
+  x         Int
+  y         Int
+  cardId    String?  
+}
+
+model Card {
+    id      String   @id @default(uuid())
+    type    CardType
+}
+
+enum CardType {
+  PATH
+  ACTION
+  DESTINATION
+}
